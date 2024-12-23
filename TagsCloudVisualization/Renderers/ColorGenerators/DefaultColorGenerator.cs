@@ -4,7 +4,7 @@ namespace TagsCloudVisualization.Renderers.ColorGenerators;
 
 public class DefaultColorGenerator : IColorGenerator
 {
-    private static Random random = new();
+    private readonly Random random = new();
     
     public Color GetColor()
     {

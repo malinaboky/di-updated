@@ -16,17 +16,17 @@ public class CircularCloudLayouter : ICloudLayouter
         this.fontCreator = fontCreator;
     }
     
-    public IEnumerable<Tag> CreateTagsCloud(Dictionary<string, int> wordsCollection)
+    public IEnumerable<Tag> CreateTagsCloud(IEnumerable<Tuple<string, int>> wordsCollection)
     {
         List<Tag> tags = [];
         using var graphic = Graphics.FromImage(new Bitmap(1, 1));
-        foreach (var word in wordsCollection)
+        foreach (var (word, wordCount) in wordsCollection)
         {
-            var tagFont = fontCreator.CreateFont(word.Value);
-            var rectangleSize = ConvertWordToRectangleSize(graphic, word.Key, tagFont);
+            var tagFont = fontCreator.CreateFont(wordCount);
+            var rectangleSize = ConvertWordToRectangleSize(graphic, word, tagFont);
             var rectangle = GetNextRectangle(tags, rectangleSize);
             
-            tags.Add(new Tag(rectangle, tagFont, word.Key));
+            tags.Add(new Tag(rectangle, tagFont, word));
         }
         
         return tags;

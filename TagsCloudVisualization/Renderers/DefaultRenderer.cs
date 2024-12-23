@@ -6,25 +6,17 @@ using TagsCloudVisualization.Renderers.ColorGenerators;
 
 namespace TagsCloudVisualization.Renderers;
 
-public class DefaultRenderer : ICloudRenderer 
+public class DefaultRenderer(ColorGeneratorFactory colorGeneratorFactory, Options options) : ICloudRenderer
 {
-    private readonly IColorGenerator colorGenerator;
-    private readonly string outputFilePath;
-    private readonly Size imageSize;
-    private readonly Color backgroundColor;
+    private readonly IColorGenerator colorGenerator = colorGeneratorFactory.GetColorGenerator(options.ColorOption);
+    private readonly string outputDirectory = options.OutputDirectory;
+    private readonly Size imageSize = new(options.ImageWidth, options.ImageHeight);
+    private readonly Color backgroundColor = Color.FromName(options.BackgroundColor);
 
-    public DefaultRenderer(IColorGenerator colorGenerator, Options options)
-    {
-        this.colorGenerator = colorGenerator;
-        outputFilePath = options.OutputFilePath;
-        imageSize = new Size(options.ImageWidth, options.ImageHeight);
-        backgroundColor = Color.FromName(options.BackgroundColor);
-    }
-    
     public void Render(IEnumerable<Tag> tags)
     {
         if (!tags.Any())
-            throw new ArgumentNullException(nameof(tags));
+            throw new ArgumentException("The cloud layout is empty");
         
         using var bitmap = new Bitmap(imageSize.Width, imageSize.Height);
         using var graphic = Graphics.FromImage(bitmap);
@@ -41,7 +33,7 @@ public class DefaultRenderer : ICloudRenderer
 
     private void SaveImage(Bitmap bitmap, int tagCount)
     {
-        var filePath = Path.Combine(outputFilePath, $"cloud_{tagCount}.png");
+        var filePath = Path.Combine(outputDirectory, $"cloud_{tagCount}.png");
         bitmap.Save(filePath, ImageFormat.Png);
     }
 }

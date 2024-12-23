@@ -1,23 +1,37 @@
-﻿using TagsCloudVisualization.WordPreprocessors.WordValidators;
+﻿using System.Text.Json;
+using TagsCloudVisualization.MyStemWrapper;
+using TagsCloudVisualization.WordPreprocessors.WordValidators;
 
 namespace TagsCloudVisualization.WordPreprocessors;
 
 public class DefaultWordPreprocessor : IWordPreprocessor
 {
     private IWordValidator wordValidator;
+    private MyStem myStem;
 
-    public DefaultWordPreprocessor(IWordValidator wordValidator)
+    public DefaultWordPreprocessor(IWordValidator wordValidator, MyStem myStem)
     {
         this.wordValidator = wordValidator;
+        this.myStem = myStem;
     }
     
-    public Dictionary<string, int> ProcessWords(IEnumerable<string> words)
+    public IEnumerable<Tuple<string, int>> ProcessTextToWords(string text)
     {
-        return words.SelectMany(word => word.Split())
-            .Where(word => !string.IsNullOrEmpty(word))
-            .GroupBy(word => word.ToLower())
-            .Where(group => wordValidator.IsValid(group.Key))
-            .OrderByDescending(group => group.Count())
-            .ToDictionary(group => group.Key, group => group.Count());
+        var analysis = myStem.Analysis(text).Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+        var result = new Dictionary<string, int>();
+        
+        foreach (var wordInfo in analysis)
+        {
+            var dto = JsonSerializer.Deserialize<MyStemDto>(wordInfo);
+            var word = dto.Analysis.First();
+                
+            if (!wordValidator.IsValid(word)) continue;
+                
+            if (!result.TryAdd(word.Lemma, 1))
+                result[word.Lemma] += 1;
+        }
+        
+        return result.Select(x => new Tuple<string, int>(x.Key, x.Value))
+            .OrderByDescending(x => x.Item2);
     }
 }

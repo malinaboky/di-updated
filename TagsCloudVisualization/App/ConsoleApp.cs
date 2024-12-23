@@ -9,19 +9,19 @@ namespace TagsCloudVisualization.App;
 public class ConsoleApp : IApp
 {
     private readonly IWordPreprocessor wordPreprocessor;
-    private readonly IFileReader fileReader;
+    private readonly FileReaderFactory fileReaderFactory;
     private readonly ICloudLayouter cloudLayouter;
     private readonly ICloudRenderer cloudRenderer;
     private readonly string inputFilePath;
 
     public ConsoleApp(IWordPreprocessor wordPreprocessor,
-        IFileReader fileReader,
+        FileReaderFactory fileReaderFactory,
         ICloudLayouter cloudLayouter,
         ICloudRenderer cloudRenderer,
         Options options)
     {
         this.wordPreprocessor = wordPreprocessor;
-        this.fileReader = fileReader;
+        this.fileReaderFactory = fileReaderFactory;
         this.cloudLayouter = cloudLayouter;
         this.cloudRenderer = cloudRenderer;
         inputFilePath = options.InputFilePath;
@@ -29,7 +29,8 @@ public class ConsoleApp : IApp
     
     public void Run()
     {
-        var words = wordPreprocessor.ProcessWords(fileReader.Read(inputFilePath));
+        var text = fileReaderFactory.GetFileReader(inputFilePath).Read(inputFilePath);
+        var words = wordPreprocessor.ProcessTextToWords(text);
         cloudRenderer.Render(cloudLayouter.CreateTagsCloud(words));
     }
 }

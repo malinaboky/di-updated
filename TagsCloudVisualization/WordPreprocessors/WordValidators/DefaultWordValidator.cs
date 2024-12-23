@@ -1,20 +1,15 @@
-﻿using MyStemWrapper;
+﻿using TagsCloudVisualization.MyStemWrapper;
 
 namespace TagsCloudVisualization.WordPreprocessors.WordValidators;
 
 public class DefaultWordValidator : IWordValidator
 {
-    private readonly MyStem myStem;
-
-    public DefaultWordValidator(MyStem myStem)
+    public bool IsValid(WordInfo wordInfo)
     {
-        this.myStem = myStem;
-    }
-    
-    public bool IsValid(string word)
-    {
-        var result = myStem.Analysis(word);
-        return !(result.Contains("CONJ") || result.Contains("INTJ") || result.Contains("PART") ||
-                result.Contains("PR") || result.Contains("SPRO"));
+        return !(wordInfo.Grammeme.Contains("CONJ") || 
+                 wordInfo.Grammeme.Contains("INTJ") || 
+                 wordInfo.Grammeme.Contains("PART") || 
+                 wordInfo.Grammeme.Contains("PR") || 
+                 wordInfo.Grammeme.Contains("SPRO"));
     }
 }

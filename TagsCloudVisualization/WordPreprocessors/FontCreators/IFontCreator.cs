@@ -4,5 +4,5 @@ namespace TagsCloudVisualization.WordPreprocessors.FontCreators;
 
 public interface IFontCreator
 {
-    public Font CreateFont(int wordCount);
+    public Font CreateFont(int fontSizeFactor);
 }

@@ -2,8 +2,8 @@
 
 public class TextFileReader : IFileReader
 {
-    public IEnumerable<string> Read(string filePath)
+    public string Read(string filePath)
     {
-        return File.ReadAllLines(filePath);
+        return File.ReadAllText(filePath);
     }
 }

@@ -2,5 +2,5 @@
 
 public interface IWordPreprocessor
 {
-    public Dictionary<string, int> ProcessWords(IEnumerable<string> words);
+    public IEnumerable<Tuple<string, int>> ProcessTextToWords(string text);
 }

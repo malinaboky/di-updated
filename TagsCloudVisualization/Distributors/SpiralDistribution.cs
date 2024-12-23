@@ -3,19 +3,14 @@ using TagsCloudVisualization.ConsoleCommands;
 
 namespace TagsCloudVisualization.Distributors;
 
-public class SpiralDistribution : ICloudDistribution
+public class SpiralDistribution(Options options) : ICloudDistribution
 {
     private const double AngleStep = 0.02;
     private const double RadiusStep = 0.01;
     private double angle;
     private double radius;
-    private readonly Point cloudCenter;
+    private readonly Point cloudCenter = new(options.ImageWidth / 2, options.ImageHeight / 2);
 
-    public SpiralDistribution(Options options)
-    {
-        cloudCenter = new Point(options.ImageWidth / 2, options.ImageHeight / 2);
-    }
-    
     public Point GetNextPoint()
     {
         var nextPoint = ConvertPolarToCartesian();
@@ -23,8 +18,6 @@ public class SpiralDistribution : ICloudDistribution
         radius += RadiusStep;
         return nextPoint;
     }
-    
-    public Point GetCenter() => cloudCenter;
 
     private Point ConvertPolarToCartesian()
     {
