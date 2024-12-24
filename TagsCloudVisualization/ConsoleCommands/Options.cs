@@ -27,6 +27,10 @@ public class Options
     
     [Option('w', "imageWidth", Default = 1920, HelpText = "Set output image width.")]
     public int ImageWidth { get; set; }
+    
+    [Option("imageFormat", Default = OutputImageFormat.Png, 
+        HelpText = "Set output image format. Possible values: Jpeg, Jpg, Png, Tiff, Bmp, Gif, Pdf.")]
+    public OutputImageFormat ImageFormat { get; set; }
 
     [Option('b', "backgroundColor", Default = "Empty", 
         HelpText = "Set background color for tags cloud. Example : -b white")]
@@ -39,6 +43,6 @@ public class Options
     public int NumOfColors { get; set; }
     
     [Option("colorOption", Default = ColorOption.Random, 
-        HelpText = "Set option of color generator for words. Possible values: Random, Gradient.")]
+        HelpText = $"Set option of color generator for words. Possible values: Random, Gradient.")]
     public ColorOption ColorOption { get; set; }
 }

@@ -1,14 +1,18 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using TagsCloudVisualization.BitmapProcessors;
 using TagsCloudVisualization.ConsoleCommands;
 using TagsCloudVisualization.Domain;
 using TagsCloudVisualization.Renderers.ColorGenerators;
 
 namespace TagsCloudVisualization.Renderers;
 
-public class DefaultRenderer(ColorGeneratorFactory colorGeneratorFactory, Options options) : ICloudRenderer
+public class DefaultRenderer(ColorGeneratorFactory colorGeneratorFactory, 
+    BitmapProcessorFactory bitmapProcessorFactory,
+    Options options) : ICloudRenderer
 {
     private readonly IColorGenerator colorGenerator = colorGeneratorFactory.GetColorGenerator(options.ColorOption);
+    private readonly IBitmapProcessor bitmapProcessor = bitmapProcessorFactory.GetBitmapProcessor(options.ImageFormat);
     private readonly string outputDirectory = options.OutputDirectory;
     private readonly Size imageSize = new(options.ImageWidth, options.ImageHeight);
     private readonly Color backgroundColor = Color.FromName(options.BackgroundColor);
@@ -28,12 +32,6 @@ public class DefaultRenderer(ColorGeneratorFactory colorGeneratorFactory, Option
             graphic.DrawString(tag.Content, tag.Font, brush, tag.Rectangle.Location);
         }
         
-        SaveImage(bitmap, tags.Count());
-    }
-
-    private void SaveImage(Bitmap bitmap, int tagCount)
-    {
-        var filePath = Path.Combine(outputDirectory, $"cloud_{tagCount}.png");
-        bitmap.Save(filePath, ImageFormat.Png);
+        bitmapProcessor.SaveImage(bitmap, outputDirectory, $"cloud_{tags.Count()}");
     }
 }

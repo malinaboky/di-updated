@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using TagsCloudVisualization.App;
+using TagsCloudVisualization.BitmapProcessors;
 using TagsCloudVisualization.ConsoleCommands;
 using TagsCloudVisualization.Distributors;
 using TagsCloudVisualization.Enums;
@@ -22,6 +23,7 @@ public static class ContainerConfig
         builder.RegisterInstance(options).AsSelf();
         builder.RegisterType<FileReaderFactory>().AsSelf();
         builder.RegisterType<ColorGeneratorFactory>().AsSelf();
+        builder.RegisterType<BitmapProcessorFactory>().AsSelf();
         builder.RegisterType<SpiralDistribution>().As<ICloudDistribution>();
         builder.RegisterType<DefaultRenderer>().As<ICloudRenderer>();
         builder.RegisterType<DefaultFontCreator>().As<IFontCreator>();
@@ -31,6 +33,7 @@ public static class ContainerConfig
         builder.RegisterType<ConsoleApp>().As<IApp>();
         ConfigureFileReaders(builder);
         ConfigureColorGenerators(builder);
+        ConfigureBitmapProcessors(builder);
 
         var myStem = new MyStem
         {
@@ -53,5 +56,18 @@ public static class ContainerConfig
     {
         builder.RegisterType<GradientColorGenerator>().Keyed<IColorGenerator>(ColorOption.Gradient);
         builder.RegisterType<DefaultColorGenerator>().Keyed<IColorGenerator>(ColorOption.Random);
+    }
+    
+    private static void ConfigureBitmapProcessors(ContainerBuilder builder)
+    {
+        builder.RegisterType<DefaultBitmapProcessor>()
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Jpg)
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Png)
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Gif)
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Tiff)
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Bmp)
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Jpeg);
+        builder.RegisterType<PdfBitmapProcessor>()
+            .Keyed<IBitmapProcessor>(OutputImageFormat.Pdf);
     }
 }
