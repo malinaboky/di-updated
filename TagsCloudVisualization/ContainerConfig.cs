@@ -6,6 +6,7 @@ using TagsCloudVisualization.Distributors;
 using TagsCloudVisualization.Enums;
 using TagsCloudVisualization.FileReaders;
 using TagsCloudVisualization.Layouters;
+using TagsCloudVisualization.Layouters.RectangleSizeCalculators;
 using TagsCloudVisualization.MyStemWrapper;
 using TagsCloudVisualization.Renderers;
 using TagsCloudVisualization.Renderers.ColorGenerators;
@@ -28,6 +29,7 @@ public static class ContainerConfig
         builder.RegisterType<DefaultRenderer>().As<ICloudRenderer>();
         builder.RegisterType<DefaultFontCreator>().As<IFontCreator>();
         builder.RegisterType<DefaultWordValidator>().As<IWordValidator>();
+        builder.RegisterType<DefaultRectangleSizeCalculator>().As<IRectangleSizeCalculator>();
         builder.RegisterType<DefaultWordPreprocessor>().As<IWordPreprocessor>();
         builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
         builder.RegisterType<ConsoleApp>().As<IApp>();
